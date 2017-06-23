@@ -12,11 +12,6 @@ from django.views.decorators.csrf import csrf_exempt
 router = routers.DefaultRouter(trailing_slash=False)
 
 router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-router.register(r'bledata', views.BledataViewSet)
-router.register(r'events', views.EventViewSet)
-router.register(r'runs', views.RunViewSet)
-router.register(r'experiments', views.ExperimentViewSet)
 router.register(r'profiles', views.ProfileViewSet)
 
 #REST API

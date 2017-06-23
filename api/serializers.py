@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from rest_framework_json_api.relations import *
+from rest_framework.relations import *
 
 
 #load django and webapp models
