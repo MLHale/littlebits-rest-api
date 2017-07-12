@@ -6,4 +6,5 @@ from django.contrib import admin
 from api.models import *
 
 # Register your models here.
-admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Device, DeviceAdmin)
+admin.site.register(DeviceEvent, DeviceEventAdmin)

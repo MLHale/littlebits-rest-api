@@ -22,7 +22,7 @@ from django.contrib.auth.models import *
 from api.models import *
 
 #REST API
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, parsers, renderers
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -37,7 +37,7 @@ from rest_framework.authentication import *
 #from filters.mixins import *
 from api.serializers import *
 from api.pagination import *
-
+import json, datetime, pytz
 
 
 
@@ -48,7 +48,7 @@ def home(request):
    """
    return render_to_response('index.html',
                {}, RequestContext(request))
-        
+
 class Register(APIView):
     permission_classes = (AllowAny,)
 
@@ -113,18 +113,67 @@ class Session(APIView):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed.
-    """
-    resource_name = 'users'
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+class DeviceEvents(APIView):
+    permission_classes = (AllowAny,)
+    parser_classes = (parsers.JSONParser,parsers.FormParser)
+    renderer_classes = (renderers.JSONRenderer, )
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed.
-    """
-    resource_name = 'profiles'
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
+    def post(self, request, *args, **kwargs):
+        json_req = json.loads(request.POST.get('request'))
+
+        eventtype = json_req.get('payload').get('delta')
+        power = json_req.get('payload').get('percent')
+        timestamp = json_req.get('timestamp')
+        userid = json_req.get('user_id')
+        requestor = request.META['REMOTE_ADDR']
+
+        try:
+            device = Device.objects.get(deviceid=json_req.get('bit_id'))
+        except Device.DoesNotExist:
+            #device not created - Create it
+            device = Device(
+                deviceid=json_req.get('bit_id'),
+                owner=userid
+            )
+            device.save()
+
+        newEvent = DeviceEvent(
+            device=device,
+            eventtype=eventtype,
+            power=power,
+            timestamp=datetime.datetime.fromtimestamp(timestamp/1000, pytz.utc),
+            userid=userid,
+            requestor=requestor
+        )
+
+        try:
+            newEvent.clean_fields()
+        except ValidationError as e:
+            print e
+            return Response({'success':False, 'error':e}, status=status.HTTP_400_BAD_REQUEST)
+
+        newEvent.save()
+        print 'New Event Logged from: ' + json_req.get('bit_id')
+        print json_req.get('payload')
+        return Response({'success': True}, status=status.HTTP_200_OK)
+
+    def get(self, request, format=None):
+        events = DeviceEvent.objects.all()
+        content = {'deviceevents': events}
+        return Response(content)
+
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed.
+#     """
+#     resource_name = 'users'
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+#
+# class ProfileViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed.
+#     """
+#     resource_name = 'profiles'
+#     queryset = Profile.objects.all()
+#     serializer_class = ProfileSerializer

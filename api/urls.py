@@ -11,13 +11,14 @@ from django.views.decorators.csrf import csrf_exempt
 #REST API routes
 router = routers.DefaultRouter(trailing_slash=False)
 
-router.register(r'users', views.UserViewSet)
-router.register(r'profiles', views.ProfileViewSet)
+# router.register(r'users', views.UserViewSet)
+# router.register(r'profiles', views.ProfileViewSet)
 
 #REST API
 urlpatterns = [
     url(r'^session/', views.Session.as_view()),
     url(r'^register', csrf_exempt(views.Register.as_view())),
+    url(r'^deviceevents', csrf_exempt(views.DeviceEvents.as_view())),
     url(r'^', include(router.urls)),
 
     #Django Rest Auth
