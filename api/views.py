@@ -38,7 +38,7 @@ from rest_framework.authentication import *
 from api.serializers import *
 from api.pagination import *
 import json, datetime, pytz
-
+from django.core import serializers
 
 
 
@@ -159,8 +159,9 @@ class DeviceEvents(APIView):
 
     def get(self, request, format=None):
         events = DeviceEvent.objects.all()
-        content = {'deviceevents': events}
-        return Response(content)
+        json_data = serializers.serialize('json', events)
+        content = {'deviceevents': json_data}
+        return HttpResponse(json_data, content_type='json')
 
 # class UserViewSet(viewsets.ModelViewSet):
 #     """

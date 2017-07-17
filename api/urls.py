@@ -11,9 +11,6 @@ from django.views.decorators.csrf import csrf_exempt
 #REST API routes
 router = routers.DefaultRouter(trailing_slash=False)
 
-# router.register(r'users', views.UserViewSet)
-# router.register(r'profiles', views.ProfileViewSet)
-
 #REST API
 urlpatterns = [
     url(r'^session/', views.Session.as_view()),

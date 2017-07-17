@@ -7,6 +7,7 @@ from django.contrib.auth.models import User, Group
 
 from django.contrib import admin
 import base64
+from rest_framework import serializers
 
 class Device(models.Model):
     owner = models.CharField(max_length=1000, blank=False)
@@ -27,8 +28,15 @@ class DeviceEvent(models.Model):
     eventtype = models.CharField(max_length=1000, blank=False)
     power = models.IntegerField()
     timestamp = models.DateTimeField()
-    userid = models.CharField(max_length=1000, blank=True, unique=True)
+    userid = models.CharField(max_length=1000, blank=True)
     requestor = models.GenericIPAddressField(blank=False)
+
+class DeviceEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeviceEvent
+        resource_name = 'deviceevents'
+        fields = "__all__"
+        read_only_fields = ('device',)
 
 class DeviceEventAdmin(admin.ModelAdmin):
     list_display = ('device','eventtype', 'power', 'timestamp')
