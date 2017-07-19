@@ -17,13 +17,11 @@ from rest_framework.authtoken.views import obtain_auth_token
 from django.conf.urls import url, include
 from django.contrib import admin
 from api import urls as api_urls
-from api import views
+from api import controllers
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include(api_urls)),
-    url(r'^', views.home),
-    #token authentication mechanism to allow registered users to access django routes
-    url(r'^api-auth-token/', obtain_auth_token),
+    url(r'^', controllers.home),
 ]

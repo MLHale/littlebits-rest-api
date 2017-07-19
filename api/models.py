@@ -15,9 +15,6 @@ class Device(models.Model):
     def __str__(self):
         return str(self.deviceid)
 
-    class JSONAPIMeta:
-        resource_name = "devices"
-
 
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ('owner','deviceid')
@@ -29,6 +26,9 @@ class DeviceEvent(models.Model):
     timestamp = models.DateTimeField()
     userid = models.CharField(max_length=1000, blank=True, unique=True)
     requestor = models.GenericIPAddressField(blank=False)
+
+    def __str__(self):
+        return str(self.eventtype) + str(self.device)
 
 class DeviceEventAdmin(admin.ModelAdmin):
     list_display = ('device','eventtype', 'power', 'timestamp')
