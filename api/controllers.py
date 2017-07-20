@@ -161,7 +161,7 @@ class DeviceEvents(APIView):
         events = DeviceEvent.objects.all()
         json_data = serializers.serialize('json', events)
         content = {'deviceevents': json_data}
-        return Response(content)
+        return HttpResponse(json_data, content_type='json')
 
 # class UserViewSet(viewsets.ModelViewSet):
 #     """
