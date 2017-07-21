@@ -132,5 +132,8 @@ STATICFILES_DIRS = [
 
 REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
-
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'api.rest_framework_config.CsrfExemptSessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    ],
 }

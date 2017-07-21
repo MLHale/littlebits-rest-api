@@ -24,7 +24,7 @@ class DeviceEvent(models.Model):
     eventtype = models.CharField(max_length=1000, blank=False)
     power = models.IntegerField()
     timestamp = models.DateTimeField()
-    userid = models.CharField(max_length=1000, blank=True, unique=True)
+    userid = models.CharField(max_length=1000, blank=True)
     requestor = models.GenericIPAddressField(blank=False)
 
     def __str__(self):
