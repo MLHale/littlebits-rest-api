@@ -35,7 +35,7 @@ from rest_framework.authentication import *
 
 #filters
 #from filters.mixins import *
-from api.serializers import *
+
 from api.pagination import *
 import json, datetime, pytz
 from django.core import serializers
