@@ -32,3 +32,13 @@ class DeviceEvent(models.Model):
 
 class DeviceEventAdmin(admin.ModelAdmin):
     list_display = ('device','eventtype', 'power', 'timestamp')
+
+class ApiKey(models.Model):
+    owner = models.CharField(max_length=1000, blank=False)
+    key = models.CharField(max_length=5000, blank=False)
+
+    def __str__(self):
+        return str(self.owner) + str(self.key)
+
+class ApiKeyAdmin(admin.ModelAdmin):
+    list_display = ('owner','key')
