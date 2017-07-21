@@ -39,7 +39,7 @@ from api.serializers import *
 from api.pagination import *
 import json, datetime, pytz
 from django.core import serializers
-
+import requests
 
 
 def home(request):
@@ -162,3 +162,67 @@ class DeviceEvents(APIView):
         json_data = serializers.serialize('json', events)
         content = {'deviceevents': json_data}
         return HttpResponse(json_data, content_type='json')
+
+class ActivateCloudbit(APIView):
+    permission_classes = (AllowAny,)
+    parser_classes = (parsers.JSONParser,parsers.FormParser)
+    renderer_classes = (renderers.JSONRenderer, )
+
+    def post(self,request):
+        print 'REQUEST DATA'
+        print str(request.data)
+        # json_req = json.loads(request.data)
+        #
+        eventtype = request.data.get('eventtype')
+        timestamp = int(request.data.get('timestamp'))
+        requestor = request.META['REMOTE_ADDR']
+        api_key = ApiKey.objects.all().first()
+
+        #get data from Littlebits API
+        r = requests.get('https://api-http.littlebitscloud.cc/v2/devices/', headers= {
+            'Authorization' : 'Bearer ' + api_key.key
+        })
+        print 'Retrieving List of Devices from Littlebits:'
+        print r.json()
+        userid = r.json()[0].get('user_id')
+        deviceid= r.json()[0].get('id')
+
+        try:
+            device = Device.objects.get(deviceid=deviceid)
+        except Device.DoesNotExist:
+            #device not created - Create it
+            device = Device(
+                deviceid=deviceid,
+                owner=userid
+            )
+            device.save()
+
+        print "Creating New event"
+
+        newEvent = DeviceEvent(
+            device=device,
+            eventtype=eventtype,
+            power=-1,
+            timestamp=datetime.datetime.fromtimestamp(timestamp/1000, pytz.utc),
+            userid=userid,
+            requestor=requestor
+        )
+
+        print newEvent
+        print "Sending Device Event to: " + str(deviceid)
+        event_req = requests.post('https://api-http.littlebitscloud.cc/v2/devices/'+deviceid+'/output', headers= {
+            'Authorization' : 'Bearer ' + api_key.key
+        })
+        print event_req.json()
+        if (event_req.json().get('success')!='true'):
+            return Response({'success':False, 'error':event_req.json().get('message')}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        try:
+            newEvent.clean_fields()
+        except ValidationError as e:
+            print e
+            return Response({'success':False, 'error':e}, status=status.HTTP_400_BAD_REQUEST)
+
+        newEvent.save()
+        print 'New Event Logged'
+        return Response({'success': True}, status=status.HTTP_200_OK)

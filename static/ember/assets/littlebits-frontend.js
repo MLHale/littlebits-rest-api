@@ -1045,11 +1045,22 @@ define('littlebits-frontend/controllers/application', ['exports', 'ember'], func
       },
       activateCloudbit: function activateCloudbit() {
         var data = {
-          'eventtype': 'dashboard_on',
-          'timestamp': Date.now(),
-          'userid': this.get('auth.userid')
+          eventtype: 'dashboard_on',
+          timestamp: Date.now().toString(),
+          userid: this.get('auth.userid')
         };
-        _ember.default.$.post('/api/activatecloudbit', data, function (response) {});
+
+        _ember.default.$.ajax({
+          url: '/api/activatecloudbit',
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json",
+          dataType: "json",
+          success: function success(response) {
+            console.log('Attempting to turn cloudbit on. Response from server is: ');
+            console.log(response);
+          }
+        });
       }
     }
   });
