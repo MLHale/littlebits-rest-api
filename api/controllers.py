@@ -171,14 +171,13 @@ class ActivateCloudbit(APIView):
     def post(self,request):
         print 'REQUEST DATA'
         print str(request.data)
-        # json_req = json.loads(request.data)
-        #
+
         eventtype = request.data.get('eventtype')
         timestamp = int(request.data.get('timestamp'))
         requestor = request.META['REMOTE_ADDR']
         api_key = ApiKey.objects.all().first()
 
-        #get data from Littlebits API
+        #get device info from Littlebits API
         r = requests.get('https://api-http.littlebitscloud.cc/v2/devices/', headers= {
             'Authorization' : 'Bearer ' + api_key.key
         })
@@ -210,19 +209,25 @@ class ActivateCloudbit(APIView):
 
         print newEvent
         print "Sending Device Event to: " + str(deviceid)
+
+        #send the new event (to turn on the device) to littlebits API
         event_req = requests.post('https://api-http.littlebitscloud.cc/v2/devices/'+deviceid+'/output', headers= {
             'Authorization' : 'Bearer ' + api_key.key
         })
         print event_req.json()
+
+        #check to ensure the device was on and received the event
         if (event_req.json().get('success')!='true'):
             return Response({'success':False, 'error':event_req.json().get('message')}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
+        #check that the event is safe to store in the databse
         try:
             newEvent.clean_fields()
         except ValidationError as e:
             print e
             return Response({'success':False, 'error':e}, status=status.HTTP_400_BAD_REQUEST)
 
+        #log the event in the DB
         newEvent.save()
         print 'New Event Logged'
         return Response({'success': True}, status=status.HTTP_200_OK)
