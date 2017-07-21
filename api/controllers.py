@@ -162,19 +162,3 @@ class DeviceEvents(APIView):
         json_data = serializers.serialize('json', events)
         content = {'deviceevents': json_data}
         return HttpResponse(json_data, content_type='json')
-
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed.
-#     """
-#     resource_name = 'users'
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-#
-# class ProfileViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed.
-#     """
-#     resource_name = 'profiles'
-#     queryset = Profile.objects.all()
-#     serializer_class = ProfileSerializer
