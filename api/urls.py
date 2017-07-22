@@ -14,8 +14,4 @@ urlpatterns = [
     url(r'^register', csrf_exempt(controllers.Register.as_view())),
     url(r'^deviceevents', csrf_exempt(controllers.DeviceEvents.as_view())),
     url(r'^', include(router.urls)),
-
-    #Django Rest Auth
-    url(r'^auth/', include('rest_framework.urls')),
-
 ]

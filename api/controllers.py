@@ -38,7 +38,7 @@ from rest_framework.authentication import *
 from api.pagination import *
 import json, datetime, pytz
 from django.core import serializers
-
+import requests
 
 
 def home(request):
