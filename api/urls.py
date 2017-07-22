@@ -15,8 +15,4 @@ urlpatterns = [
     url(r'^deviceevents', csrf_exempt(controllers.DeviceEvents.as_view())),
     url(r'^activatecloudbit', csrf_exempt(controllers.ActivateCloudbit.as_view())),
     url(r'^', include(router.urls)),
-
-    #Django Rest Auth
-    url(r'^auth/', include('rest_framework.urls')),
-
 ]
