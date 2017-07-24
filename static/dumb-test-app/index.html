@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script type="text/javascript">
+      $.get('../api/deviceevents').then(function(events){
+        console.log(events)
+        events.forEach(function(event){
+          $('#this-is-bad').append("<br>");
+          $('#this-is-bad').append('<p>Event id:' + event.pk + ' eventtype data below:' +'</p>');
+          $('#this-is-bad').append(event.fields.eventtype)
+          $('#this-is-bad').append("---------------------------------------------------<br>");
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div id='this-is-bad'>
+      <h5>This field loads in whatever data is available. This is bad. Every event loaded will be appended as a new div below this line.</h5>
+      <p>------------------------------------------------------------------------------------------------------------</p>
+    </div>
+  </body>
+</html>

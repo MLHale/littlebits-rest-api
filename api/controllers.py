@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from api.serializers import *
 #from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django_filters.rest_framework import DjangoFilterBackend
@@ -35,7 +34,7 @@ from rest_framework.authentication import *
 
 #filters
 #from filters.mixins import *
-from api.serializers import *
+
 from api.pagination import *
 import json, datetime, pytz
 from django.core import serializers
@@ -46,8 +45,15 @@ def home(request):
    """
    Send requests to / to the ember.js clientside app
    """
-   return render_to_response('index.html',
+   return render_to_response('ember/index.html',
                {}, RequestContext(request))
+
+def css_example(request):
+  """
+  Send requests to css-example/ to the insecure client app
+  """
+  return render_to_response('dumb-test-app/index.html',
+              {}, RequestContext(request))
 
 class Register(APIView):
     permission_classes = (AllowAny,)
