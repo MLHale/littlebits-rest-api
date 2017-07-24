@@ -61,7 +61,7 @@ MIDDLEWARE_CLASSES = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "static/ember/")],
+        'DIRS': [os.path.join(BASE_DIR, "static/")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
