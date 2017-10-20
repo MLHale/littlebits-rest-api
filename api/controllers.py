@@ -223,7 +223,7 @@ class ActivateCloudbit(APIView):
         print event_req.json()
 
         #check to ensure the device was on and received the event
-        if (event_req.json().get('success')!='true'):
+        if (event_req.json().get('success')!=True):
             return Response({'success':False, 'error':event_req.json().get('message')}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         #check that the event is safe to store in the databse
